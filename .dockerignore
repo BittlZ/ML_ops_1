@@ -1,0 +1,11 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+final.ipynb
+_notebook_code.py
+input/
+output/
+submission_*.csv
+*.md
+.DS_Store
