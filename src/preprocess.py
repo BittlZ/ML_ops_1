@@ -10,9 +10,6 @@ from sklearn.neighbors import BallTree
 
 from . import config
 
-# The feature builder inserts ~160 columns one at a time; that is intentional
-# and the resulting frame is defragmented before return. Silence the noisy
-# (and here irrelevant) fragmentation warning.
 warnings.simplefilter("ignore", PerformanceWarning)
 
 KW_PREMIUM = ["times square", "near", "manhattan", "queens", "subway",
@@ -39,7 +36,6 @@ def _pair_key(df: pd.DataFrame, c1: str, c2: str) -> np.ndarray:
 
 def _pct_rank_in_group(values: np.ndarray, keys: np.ndarray,
                        ref: dict) -> np.ndarray:
-    """Percentile rank of each value within the train distribution of its group."""
     out = np.full(len(values), 0.5, dtype=float)
     keys = pd.Series(keys)
     for key, idx in keys.groupby(keys).groups.items():
@@ -389,8 +385,7 @@ class FeaturePipeline:
             keys = _pair_key(df, c1, c2)
             df[name] = pd.Series(keys).map(self.cross_te[name]).fillna(self.global_mean).values
 
-        # Defragment (many incremental column inserts above) to avoid pandas
-        # PerformanceWarnings and keep downstream slicing fast.
+
         return df.copy()
 
     def transform(self, raw: pd.DataFrame) -> dict:
@@ -416,7 +411,6 @@ class FeaturePipeline:
         return {"cat": X, "le": X_le, "rf": X_rf}
 
     def build_training_matrix(self, train: pd.DataFrame) -> dict:
-        """Return model-ready views, target and host groups for training."""
         views = self.transform(train)
         y = np.clip(train[config.TARGET_COL].values.astype(float),
                     config.TARGET_MIN, config.TARGET_MAX)

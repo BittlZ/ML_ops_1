@@ -1,23 +1,12 @@
-# Convenience orchestration for the ML scoring service.
-#
-#   docker compose build            # build the image
-#   docker compose run --rm scoring # single-shot inference (input -> output)
-#
-# Regenerate model artifacts (optional, writes into ./models on the host):
-#   docker compose run --rm trainer
-#   docker compose build            # rebuild to bake the new artifacts in
 services:
   scoring:
     build: .
     image: ml-scoring-service:latest
     container_name: ml-scoring-service
-    # Inference reads ./input/test.csv and writes results to ./output.
     volumes:
       - ./input:/app/input
       - ./output:/app/output
-    # Uses the image's default CMD: python -m src.main
 
-  # Optional service to (re)train and regenerate artifacts into ./models.
   trainer:
     build: .
     image: ml-scoring-service:latest

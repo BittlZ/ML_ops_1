@@ -97,9 +97,6 @@ def main() -> int:
 
     print("[обучение] Обучение ExtraTrees...")
     from sklearn.ensemble import ExtraTreesRegressor
-    # Fewer trees + min_samples_leaf keep the serialised model well under
-    # GitHub's 100 MB file limit; compress=3 shrinks it further. ET only carries
-    # ~9% ensemble weight, so this has negligible impact on the blend.
     et = ExtraTreesRegressor(n_estimators=300, max_depth=18, min_samples_leaf=10,
                              max_features=0.7, n_jobs=-1, random_state=seed)
     et.fit(X_rf, y)
